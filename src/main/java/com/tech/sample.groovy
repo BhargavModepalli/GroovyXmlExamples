@@ -4,8 +4,7 @@ package com.tech
 class sample {
 
     static void main(String[] args){
-
-
+        
         final String books = '''
     <t version-api="2.0">
         <locations>
@@ -32,20 +31,20 @@ class sample {
     </t>
 '''
 
-        def resSlurped = new XmlSlurper().parseText(books)
-        def resParsed = new XmlParser().parseText(books)
+        def resSlurped = new XmlSlurper().parseText(books) //slurped xml
+        def resParsed = new XmlParser().parseText(books)   // parsed xml
 
         assert  resSlurped.locations.cities.city[0].name == 'chicago'
         assert  resParsed.locations.cities.city[0].name.text() == 'chicago'
 
-        //Slurped Xml--sorting based on number so sfo has least number ascending
+        //Slurped Xml--sorting based on number so sfo has least number - ascending order
 
         def sortSlurpAscening =  resSlurped.locations.cities.city.findAll { it.@id.toInteger() > 0}.sort {it.number}
 
         println("**** printing slurped ascending order number****  ${ sortSlurpAscening} ")
         assert sortSlurpAscening[0].name == 'sfo'
 
-        //Slurped Xml--sorting based on number so sfo has least number descending
+        //Slurped Xml--sorting based on number so chicago has highest number -  descending order
 
         def sortSlurpDescening =  resSlurped.locations.cities.city.findAll { it.@id.toInteger() > 0}.sort { a,b -> b.number.toInteger() <=>a.number.toInteger() }
 
@@ -54,7 +53,7 @@ class sample {
         assert sortSlurpDescening[0].name == 'chicago'
 
 
-        //Parsed Xml----sorting based on number so sfo has least number ascending
+        //Parsed Xml----sorting based on number so sfo has least number - ascending order
 
         def sortParseAscening =  resSlurped.locations.cities.city.findAll { it.@id.toInteger() > 0}.sort {it.number}
 
@@ -63,7 +62,7 @@ class sample {
 
         assert sortSlurpAscening[0].name == 'sfo'
 
-        // Parsed Xml--sorting based on number so sfo has least number descending
+        // Parsed Xml--sorting based on number so chicago has least number - descending order
 
         def sortParseDescening =  resSlurped.locations.cities.city.findAll { it.@id.toInteger() > 0}.sort { a,b -> b.number.toInteger() <=>a.number.toInteger() }
 
@@ -98,7 +97,7 @@ class sample {
 
         assert resSlurped.locations.cities.city[0].name.text() == 'chicago'
         assert resSlurped.locations.cities.city[0].number.text() == '15'
-
+        //reslurping the resSlurped inorder to get update content changes
         def resSlurpedTwicenew =new  XmlSlurper().parseText(new groovy.xml.StreamingMarkupBuilder().bind { mkp.yield resSlurped }.toString())
 
         assert resSlurpedTwicenew.locations.cities.city[0].name.text() == 'chicago modified'
